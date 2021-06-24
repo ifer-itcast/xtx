@@ -1,25 +1,55 @@
 import { createStore } from 'vuex'
 
-export default createStore({
+// A Module
+const moduleA = {
   state: {
-    username: 'ifer'
+    username: 'moduleA'
   },
   mutations: {
     updateName(state) {
-      state.username = 'elser'
+      state.username = 'moduleA HelloA'
     }
   },
   actions: {
-    updateName(ctx) {
+    updateNameAsync(ctx) {
       setTimeout(() => {
         ctx.commit('updateName')
       }, 1000)
     }
   },
-  modules: {},
   getters: {
     newName(state) {
-      return state.username + '~~'
+      return state.username + '~~~'
     }
+  }
+}
+const moduleB = {
+  namespaced: true,
+  state: {
+    username: 'moduleB'
+  },
+  mutations: {
+    updateName(state) {
+      state.username = 'moduleB HelloB'
+    }
+  },
+  actions: {
+    updateNameAsync(ctx) {
+      setTimeout(() => {
+        ctx.commit('updateName')
+      }, 1000)
+    }
+  },
+  getters: {
+    newName(state) {
+      return state.username + '~~~'
+    }
+  }
+}
+
+export default createStore({
+  modules: {
+    moduleA,
+    moduleB
   }
 })

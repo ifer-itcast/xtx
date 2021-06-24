@@ -1,33 +1,22 @@
 <template>
   <div id="nav">
-    <p>{{ $store.state.username }}</p>
+    <p>{{ $store.state.moduleA.username }}</p>
+    <!-- 无需模块名，可以直接访问 getters 中的数据 -->
     <p>{{ $store.getters.newName }}</p>
-    <button @click="handleClick1">update username</button>
-    <button @click="handleClick2">update username async</button>
+    <button @click="$store.commit('updateName')">click</button>
+    <button @click="$store.dispatch('updateNameAsync')">click async</button>
+    <hr />
+    <p>{{ $store.state.moduleB.username }}</p>
+    <p>{{ $store.getters['moduleB/newName'] }}</p>
+    <button @click="$store.commit('moduleB/updateName')">click</button>
+    <button @click="$store.dispatch('moduleB/updateNameAsync')">
+      click async
+    </button>
   </div>
 </template>
 <script>
-import { useStore } from 'vuex'
 export default {
   name: 'App',
-  setup() {
-    // 0
-    const store = useStore()
-    // 1
-    console.log(store.state.username)
-    // 2
-    console.log(store.getters.newName)
-    // 3
-    const handleClick1 = () => {
-      store.commit('updateName')
-    }
-    const handleClick2 = () => {
-      store.dispatch('updateName')
-    }
-    return {
-      handleClick1,
-      handleClick2
-    }
-  }
+  setup() {}
 }
 </script>
