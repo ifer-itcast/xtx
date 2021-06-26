@@ -1,55 +1,20 @@
 import { createStore } from 'vuex'
+import createPersistedState from 'vuex-persistedstate'
 
-// A Module
-const moduleA = {
-  state: {
-    username: 'moduleA'
-  },
-  mutations: {
-    updateName(state) {
-      state.username = 'moduleA HelloA'
-    }
-  },
-  actions: {
-    updateNameAsync(ctx) {
-      setTimeout(() => {
-        ctx.commit('updateName')
-      }, 1000)
-    }
-  },
-  getters: {
-    newName(state) {
-      return state.username + '~~~'
-    }
-  }
-}
-const moduleB = {
-  namespaced: true,
-  state: {
-    username: 'moduleB'
-  },
-  mutations: {
-    updateName(state) {
-      state.username = 'moduleB HelloB'
-    }
-  },
-  actions: {
-    updateNameAsync(ctx) {
-      setTimeout(() => {
-        ctx.commit('updateName')
-      }, 1000)
-    }
-  },
-  getters: {
-    newName(state) {
-      return state.username + '~~~'
-    }
-  }
-}
+import cart from './modules/cart'
+import user from './modules/user'
+import category from './modules/category'
 
 export default createStore({
   modules: {
-    moduleA,
-    moduleB
-  }
+    cart,
+    user,
+    category
+  },
+  plugins: [
+    createPersistedState({
+      key: '@_@',
+      paths: ['user', 'cart']
+    })
+  ]
 })
