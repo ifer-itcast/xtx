@@ -42,3 +42,12 @@ instance.interceptors.response.use(
     return Promise.reject(err)
   }
 )
+
+export default (url, method, submitData) => {
+  // 请求地址、请求方式、提交数据
+  return instance({
+    url,
+    method,
+    [method.toLowerCase() === 'get' ? 'params' : 'data']: submitData
+  })
+}
