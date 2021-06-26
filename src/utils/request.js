@@ -4,6 +4,7 @@
 // #4. 导出一个函数，返回当前 axios 实例调用的结果
 import axios from 'axios'
 import store from '@/store'
+import router from '@/router'
 
 export const baseURL = 'http://pcapi-xiaotuxian-front-devtest.itheima.net/'
 const instance = axios.create({
@@ -19,6 +20,25 @@ instance.interceptors.request.use(
     return config
   },
   err => {
+    return Promise.reject(err)
+  }
+)
+
+instance.interceptors.response.use(
+  res => {
+    return res.data
+  },
+  err => {
+    if (err.response && err.response.status === 401) {
+      // 1. 清空无效用户信息
+      store.commit('user/setUser', {})
+      // 2. 跳转到登录页并携带当前路由地址
+      // 组件 => $route.fullPath
+      // JS => router.currentRoute.fullPath => 是 ref 包装的响应式数据
+      // vue3 => router.currentRoute.value.fullPath
+      const fullPath = encodeURIComponent(router.currentRoute.value.fullPath)
+      router.push(`/login?redirectUrl=${fullPath}`)
+    }
     return Promise.reject(err)
   }
 )
