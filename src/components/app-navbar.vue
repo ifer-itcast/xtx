@@ -23,8 +23,6 @@
         </li>
       </ul>
     </div>
-    <button @click="$store.state.user.profile.token = 'xxx'">test1</button>
-    <button @click="$store.state.user.profile = { token: 'xxx' }">test2</button>
   </nav>
 </template>
 <script>
