@@ -1,6 +1,6 @@
 <template>
   <!-- 顶部通栏 -->
-  <nav>nav</nav>
+  <app-navbar />
   <!-- 头部 -->
   <header>header</header>
   <!-- 内容容器 -->
@@ -13,8 +13,12 @@
 </template>
 
 <script>
+import AppNavbar from '@/components/app-navbar'
 export default {
-  name: 'Layout'
+  name: 'Layout',
+  components: {
+    AppNavbar
+  }
 }
 </script>
 
