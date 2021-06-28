@@ -1,5 +1,5 @@
 <template>
-  <div class="xtx-carousel">
+  <div class="xtx-carousel" @mouseenter="stop" @mouseleave="start">
     <ul class="carousel-body">
       <li
         class="carousel-item"
@@ -12,14 +12,15 @@
         </RouterLink>
       </li>
     </ul>
-    <a href="javascript:;" class="carousel-btn prev"
+    <a @click="toggle(-1)" href="javascript:;" class="carousel-btn prev"
       ><i class="iconfont icon-angle-left"></i
     ></a>
-    <a href="javascript:;" class="carousel-btn next"
+    <a @click="toggle(1)" href="javascript:;" class="carousel-btn next"
       ><i class="iconfont icon-angle-right"></i
     ></a>
     <div class="carousel-indicator">
       <span
+        @click="index = i"
         :class="{ active: i === index }"
         v-for="(item, i) in sliders"
         :key="i"
@@ -29,20 +30,84 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { onUnmounted, ref, watch } from 'vue'
 export default {
   name: 'XtxCarousel',
   props: {
     sliders: {
       type: Array,
       default: () => []
+    },
+    // 自动轮播
+    autoPlay: {
+      type: Boolean,
+      default: false
+    },
+    // 间隔时间
+    duration: {
+      type: Number,
+      default: 3000
     }
   },
-  setup() {
+  setup(props) {
     // 控制显示图片的索引
     const index = ref(0)
+    // !#1 自动轮播功能
+    let timer = null
+    const autoPlayFn = () => {
+      // 每次开启之前清除之前的定时器
+      clearInterval(timer)
+      timer = setInterval(
+        () => {
+          index.value++
+          if (index.value >= props.sliders.length) {
+            index.value = 0
+          }
+        },
+        props.duration,
+        { immediate: true }
+      )
+    }
+    // 有数据且 autoPlay 是 true 才调用 autoPlayFn
+    watch(
+      () => props.sliders,
+      newVal => {
+        if (newVal.length && props.autoPlay) {
+          autoPlayFn()
+        }
+      }
+    )
+    // !#2 鼠标进入暂停，离开播放
+    const stop = () => {
+      if (timer) clearInterval(timer)
+    }
+    const start = () => {
+      if (props.sliders && props.autoPlay) {
+        autoPlayFn()
+      }
+    }
+    // !#3 上一张、下一张，小圆点切换
+    const toggle = step => {
+      // newIndex 表示将要改变的索引
+      const newIndex = index.value + step
+      if (newIndex > props.sliders.length - 1) {
+        return (index.value = 0)
+      }
+      if (newIndex < 0) {
+        return (index.value = props.sliders.length - 1)
+      }
+      // 正常情况
+      index.value = newIndex
+    }
+    // !#4 组件卸载，清除定时器
+    onUnmounted(() => {
+      clearInterval(timer)
+    })
     return {
-      index
+      index,
+      stop,
+      start,
+      toggle
     }
   }
 }
