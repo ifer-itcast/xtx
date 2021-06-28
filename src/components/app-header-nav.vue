@@ -41,6 +41,8 @@ export default {
   justify-content: space-around;
   padding-left: 40px;
   position: relative;
+  // 因为 .app-body 中的 .container 具有定位，盖过了前面的元素
+  z-index: 999;
   > li {
     margin-right: 40px;
     width: 38px;
