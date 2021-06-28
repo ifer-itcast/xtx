@@ -11,7 +11,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import '../../assets/styles/mixins.less';
 .container {
   height: 200px;
   .hoverShadow();
