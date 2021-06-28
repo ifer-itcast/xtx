@@ -1,12 +1,19 @@
 <template>
   <ul class="app-header-nav">
     <li class="home"><RouterLink to="/">首页</RouterLink></li>
-    <li v-for="item in list" :key="item.id">
-      <router-link to="/">{{ item.name }}</router-link>
-      <div class="layer">
+    <li
+      v-for="item in list"
+      :key="item.id"
+      @mouseenter="show(item)"
+      @mouseleave="hide(item)"
+    >
+      <router-link @click="hide(item)" :to="`/category/${item.id}`">{{
+        item.name
+      }}</router-link>
+      <div class="layer" :class="{ open: item.open }">
         <ul>
           <li v-for="sub in item.children" :key="sub.id">
-            <router-link to="/">
+            <router-link @click="hide(item)" :to="`/category/sub/${sub.id}`">
               <img :src="sub.picture" alt="" />
               <p>{{ sub.name }}</p>
             </router-link>
@@ -27,8 +34,20 @@ export default {
     const list = computed(() => {
       return store.state.category.list
     })
+    // 希望跳转的时候关闭二级类目
+    // 1. 给每个一级分类数据加上 open 属性
+    // 2. 提供显示和隐藏函数，修改 open 数据
+    // 3. 组件中使用此函数修改 open，控制类名的显示/隐藏
+    const show = item => {
+      store.commit('category/show', item.id)
+    }
+    const hide = item => {
+      store.commit('category/hide', item.id)
+    }
     return {
-      list
+      list,
+      show,
+      hide
     }
   }
 }
@@ -58,15 +77,19 @@ export default {
         color: @xtxColor;
         border-bottom: 1px solid @xtxColor;
       }
-      > .layer {
-        height: 132px;
-        opacity: 1;
-      }
+      // > .layer {
+      //   height: 132px;
+      //   opacity: 1;
+      // }
     }
   }
 }
 // 二级类目样式
 .layer {
+  &.open {
+    height: 132px;
+    opacity: 1;
+  }
   width: 1240px;
   background-color: #fff;
   position: absolute;
