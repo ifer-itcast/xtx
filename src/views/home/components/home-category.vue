@@ -5,7 +5,7 @@
         <RouterLink :to="`/category/${item.id}`">{{ item.name }}</RouterLink>
         <template v-if="item.children">
           <RouterLink
-            to="`/category/sub/${sub.id}`"
+            :to="`/category/sub/${sub.id}`"
             v-for="sub in item.children"
             :key="sub.id"
             >{{ sub.name }}</RouterLink
