@@ -23,16 +23,23 @@
         </li>
       </ul>
     </div>
+    <button @click="$store.state.user.profile.token = 'xxx'">test1</button>
+    <button @click="$store.state.user.profile = { token: 'xxx' }">test2</button>
   </nav>
 </template>
 <script>
+import { computed } from 'vue'
 import { useStore } from 'vuex'
 export default {
   name: 'AppTopnav',
   setup() {
     // 根据登录状态来决定页面显示状态
     const store = useStore()
-    const { profile } = store.state.user
+    // 点击 test2 按钮进行测试，不具有响应式
+    // const { profile } = store.state.user
+    const profile = computed(() => {
+      return store.state.user.profile
+    })
     return {
       profile
     }
