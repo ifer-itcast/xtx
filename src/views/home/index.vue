@@ -8,16 +8,27 @@
       <HomeBanner />
     </div>
   </div>
+  <!-- 新鲜好物 -->
+  <home-panel title="新鲜好物" sub-title="新鲜出炉 品质靠谱">
+    <template #right>
+      <xtx-more path="/" />
+    </template>
+    <div>
+      默认内容
+    </div>
+  </home-panel>
 </template>
 
 <script>
 import HomeCategory from './components/home-category.vue'
 import HomeBanner from './components/home-banner.vue'
+import HomePanel from './components/home-panel.vue'
 export default {
   name: 'HomePage',
   components: {
     HomeCategory,
-    HomeBanner
+    HomeBanner,
+    HomePanel
   }
 }
 </script>
