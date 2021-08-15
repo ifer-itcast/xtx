@@ -2,28 +2,93 @@
   <div class="top-category">
     <div class="container">
       <!-- 面包屑 -->
-      <xtx-bread>
-        <xtx-bread-item :to="{ path: '/' }">首页</xtx-bread-item>
-        <xtx-bread-item to="/category/1005001">电器</xtx-bread-item>
-        <xtx-bread-item>空调</xtx-bread-item>
-      </xtx-bread>
+      <XtxBread>
+        <XtxBreadItem to="/">首页</XtxBreadItem>
+        <XtxBreadItem>{{ topCategory.name }}</XtxBreadItem>
+      </XtxBread>
       <!-- 轮播图 -->
-      <!-- 全部分类 -->
-      <!-- 各个分类推荐商品 -->
+      <XtxCarousel :sliders="sliders" style="height:500px" />
+      <!-- 所有二级分类 -->
+      <div class="sub-list">
+        <h3>全部分类</h3>
+        <ul>
+          <li v-for="sub in topCategory.children" :key="sub.id">
+            <a href="javascript:;">
+              <img :src="sub.picture" />
+              <p>{{ sub.name }}</p>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <!-- 不同分类商品 -->
     </div>
   </div>
 </template>
-
 <script>
+import { computed, ref } from 'vue'
+import { findBanner } from '@/api/home'
+import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
 export default {
   name: 'TopCategory',
-
-  data() {
-    return {}
-  },
-
-  methods: {}
+  setup() {
+    // 轮播图
+    const sliders = ref([])
+    findBanner().then(data => {
+      sliders.value = data.result
+    })
+    // 面包屑 + 所有子分类
+    const store = useStore()
+    const route = useRoute()
+    const topCategory = computed(() => {
+      // 当前顶级分类 === 路由 ID 去 category 模块的 list 中查找
+      let cate = {}
+      const item = store.state.category.list.find(item => {
+        return item.id === route.params.id
+      })
+      if (item) cate = item
+      return cate
+    })
+    return { sliders, topCategory }
+  }
 }
 </script>
-
-<style lang="less" scoped></style>
+<style scoped lang="less">
+.top-category {
+  h3 {
+    font-size: 28px;
+    color: #666;
+    font-weight: normal;
+    text-align: center;
+    line-height: 100px;
+  }
+  .sub-list {
+    margin-top: 20px;
+    background-color: #fff;
+    ul {
+      display: flex;
+      padding: 0 32px;
+      flex-wrap: wrap;
+      li {
+        width: 168px;
+        height: 160px;
+        a {
+          text-align: center;
+          display: block;
+          font-size: 16px;
+          img {
+            width: 100px;
+            height: 100px;
+          }
+          p {
+            line-height: 40px;
+          }
+          &:hover {
+            color: @xtxColor;
+          }
+        }
+      }
+    }
+  }
+}
+</style>
