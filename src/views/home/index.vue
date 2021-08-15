@@ -9,22 +9,19 @@
     </div>
   </div>
   <!-- 新鲜好物 -->
-  <home-panel title="新鲜好物" subTitle="新鲜出炉 品质靠谱">
-    <template #right><xtx-more path="/"/></template>
-    <p>面板内容</p>
-  </home-panel>
+  <home-new/>
 </template>
 
 <script>
 import HomeCategory from './components/home-category.vue'
 import HomeBanner from './components/home-banner.vue'
-import HomePanel from './components/home-panel.vue'
+import HomeNew from './components/home-new.vue'
 export default {
   name: 'HomePage',
   components: {
     HomeCategory,
     HomeBanner,
-    HomePanel
+    HomeNew
   }
 }
 </script>
