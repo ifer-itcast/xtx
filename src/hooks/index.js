@@ -5,8 +5,9 @@ import { useIntersectionObserver } from '@vueuse/core'
  * @param {Object} target - 观测的目标元素
  * @param {Function} apiFn - API 函数
  */
-export const useLazyData = (target, apiFn) => {
+export const useLazyData = apiFn => {
   const result = ref([])
+  const target = ref(null)
   const { stop } = useIntersectionObserver(
     target,
     ([{ isIntersecting }], observerElement) => {
@@ -20,5 +21,8 @@ export const useLazyData = (target, apiFn) => {
       }
     }
   )
-  return result
+  return {
+    result,
+    target
+  }
 }
