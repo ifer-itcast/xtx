@@ -14,19 +14,33 @@
         :class="{ disabled: index === 1 }"
       ></a>
     </template>
-    <div class="box" ref="box">
-      <ul
-        class="list"
-        :style="{
-          transform: `translateX(${-index * 1240}px)`
-        }"
-      >
-        <li v-for="item in brands" :key="item.id">
-          <RouterLink to="/">
-            <img :src="item.picture" alt="" />
-          </RouterLink>
-        </li>
-      </ul>
+    <div class="box" ref="target">
+      <transition name="fade">
+        <ul
+          v-if="brands.length"
+          class="list"
+          :style="{
+            transform: `translateX(${-index * 1240}px)`
+          }"
+        >
+          <li v-for="item in brands" :key="item.id">
+            <RouterLink to="/">
+              <img :src="item.picture" alt="" />
+            </RouterLink>
+          </li>
+        </ul>
+        <div v-else class="skeleton">
+          <XtxSkeleton
+            class="item"
+            v-for="i in 5"
+            :key="i"
+            animated
+            bg="#e4e4e4"
+            width="240px"
+            height="305px"
+          />
+        </div>
+      </transition>
     </div>
   </HomePanel>
 </template>
@@ -35,14 +49,16 @@
 import { ref } from 'vue'
 import { findBrand } from '@/api/home'
 import HomePanel from './home-panel'
+import { useLazyData } from '@/hooks'
 export default {
   name: 'HomeBrand',
   components: { HomePanel },
   setup() {
-    const brands = ref([])
+    /* const brands = ref([])
     findBrand(10).then(data => {
       brands.value = data.result
-    })
+    }) */
+    const { target, result } = useLazyData(() => findBrand(10))
     // 切换效果
     const index = ref(0)
     const toggle = step => {
@@ -51,15 +67,26 @@ export default {
       index.value = newIndex
     }
     return {
-      brands,
+      brands: result,
       index,
-      toggle
+      toggle,
+      target
     }
   }
 }
 </script>
 
 <style scoped lang="less">
+.skeleton {
+  width: 100%;
+  display: flex;
+  .item {
+    margin-right: 10px;
+    &:nth-child(5n) {
+      margin-right: 0;
+    }
+  }
+}
 .home-panel {
   background: #f5f5f5;
 }
