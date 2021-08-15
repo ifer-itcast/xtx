@@ -9,13 +9,9 @@
     </div>
   </div>
   <!-- 新鲜好物 -->
-  <home-panel title="新鲜好物" sub-title="新鲜出炉 品质靠谱">
-    <template #right>
-      <xtx-more path="/" />
-    </template>
-    <div>
-      默认内容
-    </div>
+  <home-panel title="新鲜好物" subTitle="新鲜出炉 品质靠谱">
+    <template #right><xtx-more path="/"/></template>
+    <p>面板内容</p>
   </home-panel>
 </template>
 
