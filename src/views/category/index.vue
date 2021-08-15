@@ -4,7 +4,11 @@
       <!-- 面包屑 -->
       <XtxBread>
         <XtxBreadItem to="/">首页</XtxBreadItem>
-        <XtxBreadItem>{{ topCategory.name }}</XtxBreadItem>
+        <transition name="fade-right">
+          <XtxBreadItem :key="topCategory.id">{{
+            topCategory.name
+          }}</XtxBreadItem>
+        </transition>
       </XtxBread>
       <!-- 轮播图 -->
       <XtxCarousel :sliders="sliders" style="height:500px" />
@@ -23,7 +27,7 @@
       <!-- 各个分类推荐商品 -->
       <div class="ref-goods" v-for="sub in subList" :key="sub.id">
         <div class="head">
-          <h3>- {{sub.name}} -</h3>
+          <h3>- {{ sub.name }} -</h3>
           <p class="tag">温暖柔软，品质之选</p>
           <XtxMore :path="`/category/sub/${sub.id}`" />
         </div>
