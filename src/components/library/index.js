@@ -1,7 +1,8 @@
+import defaultImg from '@/assets/images/200.png'
 import XtxSkeleton from './xtx-skeleton.vue'
 import XtxCarousel from './xtx-carousel.vue'
 import XtxMore from './xtx-more.vue'
-import defaultImg from '@/assets/images/200.png'
+import XtxBread from './xtx-bread.vue'
 
 /**
  * 图片懒加载
@@ -39,7 +40,7 @@ export default {
     app.component(XtxSkeleton.name, XtxSkeleton)
     app.component(XtxCarousel.name, XtxCarousel)
     app.component(XtxMore.name, XtxMore)
-
+    app.component(XtxBread.name, XtxBread)
     // 定义指令
     defineDirective(app)
   }
