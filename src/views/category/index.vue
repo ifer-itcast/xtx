@@ -2,8 +2,10 @@
   <div class="top-category">
     <div class="container">
       <!-- 面包屑 -->
-      <xtx-bread parentPath="/category/1005000" parentName="电器">
-        空凋
+      <xtx-bread>
+        <xtx-bread-item :to="{ path: '/' }">首页</xtx-bread-item>
+        <xtx-bread-item to="/category/1005001">电器</xtx-bread-item>
+        <xtx-bread-item>空调</xtx-bread-item>
       </xtx-bread>
       <!-- 轮播图 -->
       <!-- 全部分类 -->
