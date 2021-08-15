@@ -10,7 +10,7 @@ export const useLazyData = apiFn => {
   const target = ref(null)
   const { stop } = useIntersectionObserver(
     target,
-    ([{ isIntersecting }], observerElement) => {
+    ([{ isIntersecting }]) => {
       if (isIntersecting) {
         // 停止观察
         stop()
@@ -19,6 +19,9 @@ export const useLazyData = apiFn => {
           result.value = data.result
         })
       }
+    },
+    {
+      threshold: 0
     }
   )
   return {

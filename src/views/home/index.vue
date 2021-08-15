@@ -13,7 +13,9 @@
   <!-- 人气推荐 -->
   <home-hot />
   <!-- 热门品牌 -->
-  <home-brand/>
+  <home-brand />
+  <!-- 产品区块 -->
+  <home-product />
 </template>
 
 <script>
@@ -23,6 +25,7 @@ import HomeBanner from './components/home-banner.vue'
 import HomeNew from './components/home-new.vue'
 import HomeHot from './components/home-hot.vue'
 import HomeBrand from './components/home-brand.vue'
+import HomeProduct from './components/home-product.vue'
 export default {
   name: 'HomePage',
   components: {
@@ -30,7 +33,8 @@ export default {
     HomeBanner,
     HomeNew,
     HomeHot,
-    HomeBrand
+    HomeBrand,
+    HomeProduct
   },
   setup() {
     const show = ref(true)
@@ -41,6 +45,4 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
-
-</style>
+<style lang="less" scoped></style>
