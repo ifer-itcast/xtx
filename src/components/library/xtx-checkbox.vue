@@ -18,8 +18,10 @@ export default {
   setup(props, { emit }) {
     const checked = useVModel(props, 'modelValue', emit)
     const changeChecked = () => {
-      // 通知父更新
-      checked.value = !checked.value
+      const newVal = !checked.value
+      // 通知父更新 2 个事件：@update:modelValue 和 @change
+      checked.value = newVal
+      emit('change', changeChecked)
     }
     return { checked, changeChecked }
   }
