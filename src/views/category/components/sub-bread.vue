@@ -24,7 +24,6 @@ export default {
     const store = useStore()
     // 3. 通过计算属性得到，二级类目的名称和 ID，一级类目的名称和 ID
     const category = computed(() => {
-      console.log(1)
       const cate = {}
       store.state.category.list.forEach(top => {
         if (top.children) {
