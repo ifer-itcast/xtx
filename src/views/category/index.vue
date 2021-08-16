@@ -83,7 +83,8 @@ export default {
     watch(
       () => route.params.id,
       newVal => {
-        newVal && getSubList()
+        // newVal && getSubList()
+        if (newVal && `/category/${newVal}` === route.path) getSubList()
       },
       { immediate: true }
     )
