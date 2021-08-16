@@ -16,3 +16,12 @@ export const findAllCategory = () => {
 export const findTopCategory = id => {
   return request('/category', 'get', { id })
 }
+
+/**
+ * 根据二级分类 ID 获取数据
+ * @param {String} id 二级分类 ID
+ * @returns Promise
+ */
+export const findSubCategoryFilter = id => {
+  return request('/category/sub/filter', 'get', { id })
+}
