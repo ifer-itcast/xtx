@@ -4,7 +4,7 @@
       <!-- 面包屑 -->
       <sub-bread />
       <!-- 筛选区 -->
-      <sub-filter />
+      <sub-filter @filter-change="filterChange" />
       <!-- 商品面板（排序+列表） -->
       <div class="goods-list">
         <sub-sort @sort-change="sortChange" />
@@ -84,8 +84,14 @@ export default {
       reqParams.page = 1
       goodsList.value = []
     }
+    const filterChange = filterParams => {
+      finished.value = false
+      reqParams = { ...reqParams, ...filterParams }
+      reqParams.page = 1
+      goodsList.value = []
+    }
     // 更改筛选组件的筛选属性，重新请求
-    return { loading, finished, getData, goodsList, sortChange }
+    return { loading, finished, getData, goodsList, sortChange, filterChange }
   }
 }
 </script>

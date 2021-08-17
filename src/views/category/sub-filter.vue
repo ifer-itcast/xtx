@@ -3,27 +3,13 @@
     <div class="item">
       <div class="head">品牌：</div>
       <div class="body">
-        <a
-          :class="{ active: filterData.selectedBrand === brand.id }"
-          href="javasript:;"
-          v-for="brand in filterData.brands"
-          :key="brand.id"
-          @click="filterData.selectedBrand = brand.id"
-          >{{ brand.name }}</a
-        >
+        <a :class="{ active: filterData.selectedBrand === brand.id }" href="javascript:;" v-for="brand in filterData.brands" :key="brand.id" @click="changeBrand(brand.id)">{{ brand.name }}</a>
       </div>
     </div>
-    <div class="item" v-for="p in filterData.saleProperties" :key="p.id">
-      <div class="head">{{ p.name }}：</div>
+    <div class="item" v-for="item in filterData.saleProperties" :key="item.id">
+      <div class="head">{{ item.name }}：</div>
       <div class="body">
-        <a
-          :class="{ active: p.selectedProp === item.id }"
-          href="javasript:;"
-          v-for="item in p.properties"
-          :key="item.id"
-          @click="p.selectedProp = item.id"
-          >{{ item.name }}</a
-        >
+        <a :class="{ active: item.selectedProp === prop.id }" href="javascript:;" v-for="prop in item.properties" :key="prop.id" @click="changeProp(item, prop.id)">{{ prop.name }}</a>
       </div>
     </div>
   </div>
@@ -41,7 +27,7 @@ import { useRoute } from 'vue-router'
 import { ref, watch } from 'vue'
 export default {
   name: 'SubFilter',
-  setup() {
+  setup(props, { emit }) {
     const route = useRoute()
     const filterData = ref(null)
     const filterLoading = ref(false)
@@ -67,7 +53,36 @@ export default {
       },
       { immediate: true }
     )
-    return { filterData, filterLoading }
+    const getFilterParams = () => {
+      const filterParams = {}
+      // 品牌
+      filterParams.brandId = filterData.value.selectedBrand
+      // 属性
+      const attrs = []
+      filterData.value.saleProperties.forEach(item => {
+        if (item.selectedProp) {
+          const prop = item.properties.find(prop => prop.id === item.selectedProp)
+          attrs.push({ groupName: item.name, propertyName: prop.name })
+        }
+      })
+      if (attrs.length) filterParams.attrs = attrs
+      // { brandId: '', attrs: [{ groupName: '', propertyName: '' }] }
+      return filterParams
+    }
+
+    // 记录当前选择的品牌
+    const changeBrand = brandId => {
+      if (filterData.value.selectedBrand === brandId) return
+      filterData.value.selectedBrand = brandId
+      emit('filter-change', getFilterParams())
+    }
+    // 记录选择的销售属性
+    const changeProp = (item, propId) => {
+      if (item.selectedProp === propId) return
+      item.selectedProp = propId
+      emit('filter-change', getFilterParams())
+    }
+    return { filterData, filterLoading, changeBrand, changeProp }
   }
 }
 </script>
