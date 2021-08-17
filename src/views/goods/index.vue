@@ -4,9 +4,9 @@
       <!-- 面包屑 -->
       <XtxBread>
         <XtxBreadItem to="/">首页</XtxBreadItem>
-        <XtxBreadItem to="/">手机</XtxBreadItem>
-        <XtxBreadItem to="/">华为</XtxBreadItem>
-        <XtxBreadItem to="/">p30</XtxBreadItem>
+        <XtxBreadItem v-if="goods" :to="`/category/${goods.categories[1].id}`">{{ goods.categories[1].name }}</XtxBreadItem>
+        <XtxBreadItem v-if="goods" :to="`/category/sub/${goods.categories[0].id}`">{{ goods.categories[0].name }}</XtxBreadItem>
+        <XtxBreadItem v-if="goods">{{ goods.name }}</XtxBreadItem>
       </XtxBread>
       <!-- 商品信息 -->
       <div class="goods-info"></div>
@@ -28,10 +28,40 @@
 </template>
 
 <script>
+import { ref, watch, nextTick } from 'vue'
+import { useRoute } from 'vue-router'
+import { findGoods } from '@/api/product'
 import GoodsRelevant from './components/goods-relevant'
+
+const useGoods = () => {
+  const goods = ref(null)
+  const route = useRoute()
+  // 可能出现路由地址变化，不会初始化组件
+  watch(
+    () => route.params.id,
+    newVal => {
+      if (newVal && `/product/${newVal}` === route.path) {
+        findGoods(route.params.id).then(data => {
+          // 目的：让使用 v-if 为 goods 的组件重新销毁和创建
+          goods.value = null
+          nextTick(() => {
+            goods.value = data.result
+          })
+        })
+      }
+    },
+    { immediate: true }
+  )
+  return goods
+}
 export default {
   name: 'XtxGoodsPage',
-  components: { GoodsRelevant }
+  components: { GoodsRelevant },
+  setup() {
+    // 获取商品详情，进行渲染
+    const goods = useGoods()
+    return { goods }
+  }
 }
 </script>
 
