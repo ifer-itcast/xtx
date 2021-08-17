@@ -10,8 +10,8 @@
         <sub-sort />
         <!-- 列表 -->
         <ul>
-          <li v-for="i in 20" :key="i">
-            <goods-item :goods="{}" />
+          <li v-for="goods in goodsList" :key="goods.id">
+            <goods-item :goods="goods" />
           </li>
         </ul>
         <!-- 加载 -->
@@ -22,11 +22,13 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import SubBread from './components/sub-bread.vue'
 import SubFilter from './sub-filter.vue'
 import SubSort from './components/sub-sort.vue'
 import GoodsItem from './components/goods-item.vue'
+import { findSubCategoryGoods } from '@/api/category'
+import { useRoute } from 'vue-router'
 export default {
   name: 'SubCategory',
   components: {
@@ -36,12 +38,46 @@ export default {
     GoodsItem
   },
   setup() {
+    const route = useRoute()
     const loading = ref(false)
     const finished = ref(false)
-    const getData = () => {
-      console.log('加载数据')
+    const goodsList = ref([])
+    // 查询参数
+    let reqParams = {
+      page: 1,
+      pageSize: 20
     }
-    return { loading, finished, getData }
+    // 获取数据函数
+    const getData = () => {
+      loading.value = true
+      reqParams.categoryId = route.params.id
+      findSubCategoryGoods(reqParams).then(({ result }) => {
+        if (result.items.length) {
+          goodsList.value.push(...result.items)
+          reqParams.page++
+        } else {
+          // 加载完毕
+          finished.value = true
+        }
+        // 请求结束
+        loading.value = false
+      })
+    }
+    // 切换到二级分类时重新加载数据
+    watch(
+      () => route.params.id,
+      newVal => {
+        if (newVal && route.path === `/category/sub/${newVal}`) {
+          goodsList.value = []
+          reqParams = {
+            page: 1,
+            pageSize: 20
+          }
+          finished.value = false
+        }
+      }
+    )
+    return { loading, finished, getData, goodsList }
   }
 }
 </script>
