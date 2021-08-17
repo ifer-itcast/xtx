@@ -7,7 +7,7 @@
       <sub-filter />
       <!-- 商品面板（排序+列表） -->
       <div class="goods-list">
-        <sub-sort />
+        <sub-sort @sort-change="sortChange" />
         <!-- 列表 -->
         <ul>
           <li v-for="goods in goodsList" :key="goods.id">
@@ -77,7 +77,15 @@ export default {
         }
       }
     )
-    return { loading, finished, getData, goodsList }
+    // 更改排序组件的筛选属性，重新请求
+    const sortChange = sortParams => {
+      finished.value = false
+      reqParams = { ...reqParams, ...sortParams }
+      reqParams.page = 1
+      goodsList.value = []
+    }
+    // 更改筛选组件的筛选属性，重新请求
+    return { loading, finished, getData, goodsList, sortChange }
   }
 }
 </script>
