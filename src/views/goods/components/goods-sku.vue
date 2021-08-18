@@ -1,32 +1,39 @@
 <template>
   <div class="goods-sku">
-    <dl>
-      <dt>颜色</dt>
+    <dl v-for="item in goods.specs" :key="item.id">
+      <dt>{{ item.name }}</dt>
       <dd>
-        <img class="selected" src="https://yanxuan-item.nosdn.127.net/d77c1f9347d06565a05e606bd4f949e0.png" alt="" />
-        <img class="disabled" src="https://yanxuan-item.nosdn.127.net/d77c1f9347d06565a05e606bd4f949e0.png" alt="" />
-      </dd>
-    </dl>
-    <dl>
-      <dt>尺寸</dt>
-      <dd>
-        <span class="disabled">10英寸</span>
-        <span class="selected">20英寸</span>
-        <span>30英寸</span>
-      </dd>
-    </dl>
-    <dl>
-      <dt>版本</dt>
-      <dd>
-        <span>美版</span>
-        <span>港版</span>
+        <template v-for="val in item.values" :key="val.name">
+          <img :class="{ selected: val.selected }" @click="changeSku(item, val)" v-if="val.picture" :src="val.picture" :title="val.name" />
+          <span :class="{ selected: val.selected }" @click="changeSku(item, val)" v-else>{{ val.name }}</span>
+        </template>
       </dd>
     </dl>
   </div>
 </template>
 <script>
 export default {
-  name: 'GoodsSku'
+  name: 'GoodsSku',
+  props: {
+    goods: {
+      type: Object,
+      default: () => ({ specs: [], skus: [] })
+    }
+  },
+  setup(props) {
+    const changeSku = (item, val) => {
+      // 1. 选中与取消选中逻辑
+      if (val.selected) {
+        val.selected = false
+      } else {
+        item.values.forEach(bv => {
+          bv.selected = false
+        })
+        val.selected = true
+      }
+    }
+    return { changeSku }
+  }
 }
 </script>
 <style scoped lang="less">
