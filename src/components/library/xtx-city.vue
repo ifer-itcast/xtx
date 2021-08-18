@@ -1,21 +1,21 @@
 <template>
   <div class="xtx-city" ref="target">
     <div class="select" @click="toggleDialog" :class="{ visible }">
-      <span class="placeholder">请选择配送地址</span>
-      <span class="value"></span>
+      <span v-if="!fullLocation" class="placeholder">请选择配送地址</span>
+      <span v-else class="value">{{ fullLocation }}</span>
       <i class="iconfont icon-angle-down"></i>
     </div>
     <div class="option" v-if="visible">
       <div v-if="loading" class="loading"></div>
       <template v-else>
-        <span class="ellipsis" v-for="item in currList" :key="item.code">{{ item.name }}</span>
+        <span class="ellipsis" @click="changeItem(item)" v-for="item in currList" :key="item.code">{{ item.name }}</span>
       </template>
     </div>
   </div>
 </template>
 <script>
 import axios from 'axios'
-import { ref, computed } from 'vue'
+import { ref, computed, reactive } from 'vue'
 import { onClickOutside } from '@vueuse/core'
 const getCityData = () => {
   return new Promise((resolve, reject) => {
@@ -34,7 +34,13 @@ const getCityData = () => {
 }
 export default {
   name: 'XtxCity',
-  setup() {
+  props: {
+    fullLocation: {
+      type: String,
+      default: ''
+    }
+  },
+  setup(props, { emit }) {
     // 控制展开收起
     const visible = ref(false)
     const loading = ref(false)
@@ -47,6 +53,10 @@ export default {
         cityData.value = data
         loading.value = false // 加载完
       })
+      // 清空之前的选择
+      for (const key in changeResult) {
+        changeResult[key] = ''
+      }
     }
     const closeDialog = () => {
       visible.value = false
@@ -63,10 +73,50 @@ export default {
 
     const currList = computed(() => {
       // 省
-      const currList = cityData.value
+      let currList = cityData.value
+      // 市
+      if (changeResult.provinceCode && changeResult.provinceCode) {
+        currList = currList.find(p => p.code === changeResult.provinceCode).areaList
+      }
+      // 区
+      if (changeResult.cityCode && changeResult.cityName) {
+        currList = currList.find(c => c.code === changeResult.cityCode).areaList
+      }
       return currList
     })
-    return { visible, toggleDialog, target, currList, loading }
+
+    const changeResult = reactive({
+      provinceCode: '',
+      provinceName: '',
+      cityCode: '',
+      cityName: '',
+      countyCode: '',
+      countyName: '',
+      fullLocation: ''
+    })
+
+    const changeItem = item => {
+      // 省
+      if (item.level === 0) {
+        changeResult.provinceCode = item.code
+        changeResult.provinceName = item.name
+      }
+      // 市
+      if (item.level === 1) {
+        changeResult.cityCode = item.code
+        changeResult.cityName = item.name
+      }
+      // 区
+      if (item.level === 2) {
+        changeResult.countyCode = item.code
+        changeResult.countyName = item.name
+        changeResult.fullLocation = `${changeResult.provinceName} ${changeResult.cityName} ${changeResult.countyName}`
+        closeDialog()
+        emit('change', changeResult)
+      }
+    }
+
+    return { visible, toggleDialog, target, currList, loading, changeItem }
   }
 }
 </script>
