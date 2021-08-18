@@ -4,8 +4,8 @@
       <dt>{{ item.name }}</dt>
       <dd>
         <template v-for="val in item.values" :key="val.name">
-          <img :class="{ selected: val.selected }" @click="changeSku(item, val)" v-if="val.picture" :src="val.picture" :title="val.name" />
-          <span :class="{ selected: val.selected }" @click="changeSku(item, val)" v-else>{{ val.name }}</span>
+          <img :class="{ selected: val.selected, disabled: val.disabled }" @click="changeSku(item, val)" v-if="val.picture" :src="val.picture" :title="val.name" />
+          <span :class="{ selected: val.selected, disabled: val.disabled }" @click="changeSku(item, val)" v-else>{{ val.name }}</span>
         </template>
       </dd>
     </dl>
@@ -39,6 +39,33 @@ const getPathMap = skus => {
   })
   return pathMap
 }
+
+// 得到当前选中规格集合
+const getSelectedArr = specs => {
+  const selectedArr = []
+  specs.forEach(spec => {
+    const selectedVal = spec.values.find(val => val.selected)
+    selectedArr.push(selectedVal ? selectedVal.name : undefined)
+  })
+  return selectedArr
+}
+
+// 更新按钮的禁用状态
+const updateDisabledStatus = (specs, pathMap) => {
+  specs.forEach((spec, i) => {
+    const selectedArr = getSelectedArr(specs)
+    spec.values.forEach(val => {
+      // 已经选中的按钮不用判断
+      if (val.name === selectedArr[i]) return false
+      // 未选中的替换对应的值
+      selectedArr[i] = val.name
+      // 过滤无效值得到key
+      const key = selectedArr.filter(v => v).join(spliter)
+      // 设置禁用状态
+      val.disabled = !pathMap[key]
+    })
+  })
+}
 export default {
   name: 'GoodsSku',
   props: {
@@ -48,8 +75,11 @@ export default {
     }
   },
   setup(props) {
+    const pathMap = getPathMap(props.goods.skus)
+    updateDisabledStatus(props.goods.specs, pathMap)
     const changeSku = (item, val) => {
-      // 1. 选中与取消选中逻辑
+      // 禁用就返回
+      if (val.disabled) return false
       if (val.selected) {
         val.selected = false
       } else {
@@ -58,9 +88,8 @@ export default {
         })
         val.selected = true
       }
+      updateDisabledStatus(props.goods.specs, pathMap)
     }
-    const pathMap = getPathMap(props.goods.skus)
-    console.log(pathMap)
     return { changeSku }
   }
 }
