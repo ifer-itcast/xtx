@@ -6,20 +6,47 @@
       <i class="iconfont icon-angle-down"></i>
     </div>
     <div class="option" v-if="visible">
-      <span class="ellipsis" v-for="i in 24" :key="i">北京市</span>
+      <div v-if="loading" class="loading"></div>
+      <template v-else>
+        <span class="ellipsis" v-for="item in currList" :key="item.code">{{ item.name }}</span>
+      </template>
     </div>
   </div>
 </template>
 <script>
-import { ref } from 'vue'
+import axios from 'axios'
+import { ref, computed } from 'vue'
 import { onClickOutside } from '@vueuse/core'
+const getCityData = () => {
+  return new Promise((resolve, reject) => {
+    if (window.cityData) {
+      // 有缓存
+      resolve(window.cityData)
+    } else {
+      // 无缓存
+      const url = 'https://yjy-oss-files.oss-cn-zhangjiakou.aliyuncs.com/tuxian/area.json'
+      axios.get(url).then(res => {
+        window.cityData = res.data
+        resolve(window.cityData)
+      })
+    }
+  })
+}
 export default {
   name: 'XtxCity',
   setup() {
     // 控制展开收起
     const visible = ref(false)
+    const loading = ref(false)
+    // 城市数据
+    const cityData = ref([])
     const openDialog = () => {
       visible.value = true
+      loading.value = true // 加载中
+      getCityData().then(data => {
+        cityData.value = data
+        loading.value = false // 加载完
+      })
     }
     const closeDialog = () => {
       visible.value = false
@@ -33,7 +60,13 @@ export default {
     onClickOutside(target, () => {
       closeDialog()
     })
-    return { visible, toggleDialog, target }
+
+    const currList = computed(() => {
+      // 省
+      const currList = cityData.value
+      return currList
+    })
+    return { visible, toggleDialog, target, currList, loading }
   }
 }
 </script>
@@ -84,6 +117,11 @@ export default {
       &:hover {
         background: #f5f5f5;
       }
+    }
+    .loading {
+      height: 290px;
+      width: 100%;
+      background: url(../../assets/images/loading.gif) no-repeat center;
     }
   }
 }
