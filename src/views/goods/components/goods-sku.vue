@@ -66,16 +66,33 @@ const updateDisabledStatus = (specs, pathMap) => {
     })
   })
 }
+// 初始化选中状态
+const initSelectedStatus = (goods, skuId) => {
+  const sku = goods.skus.find(sku => sku.id === skuId)
+  if (sku) {
+    goods.specs.forEach((spec, i) => {
+      const value = sku.specs[i].valueName
+      spec.values.forEach(val => {
+        val.selected = val.name === value
+      })
+    })
+  }
+}
 export default {
   name: 'GoodsSku',
   props: {
     goods: {
       type: Object,
       default: () => ({ specs: [], skus: [] })
+    },
+    skuId: {
+      type: String,
+      default: ''
     }
   },
-  setup(props) {
+  setup(props, { emit }) {
     const pathMap = getPathMap(props.goods.skus)
+    initSelectedStatus(props.goods, props.skuId)
     updateDisabledStatus(props.goods.specs, pathMap)
     const changeSku = (item, val) => {
       // 禁用就返回
@@ -89,6 +106,22 @@ export default {
         val.selected = true
       }
       updateDisabledStatus(props.goods.specs, pathMap)
+      // 将 sku 数据传递出去
+      const selectedArr = getSelectedArr(props.goods.specs).filter(v => v)
+      if (selectedArr.length === props.goods.specs.length) {
+        const skuIds = pathMap[selectedArr.join(spliter)]
+        const sku = props.goods.skus.find(sku => sku.id === skuIds[0])
+        // 传递
+        emit('change', {
+          skuId: sku.id,
+          price: sku.price,
+          oldPrice: sku.oldPrice,
+          inventory: sku.inventory,
+          specsText: sku.specs.reduce((p, n) => `${p} ${n.name}：${n.valueName}`, '').replace(' ', '')
+        })
+      } else {
+        emit('change', {})
+      }
     }
     return { changeSku }
   }
