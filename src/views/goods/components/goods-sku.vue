@@ -12,6 +12,33 @@
   </div>
 </template>
 <script>
+import getPowerSet from '@/vender/power-set'
+const spliter = '★'
+// 根据 skus 数据得到路径字典对象
+const getPathMap = skus => {
+  const pathMap = {}
+  skus.forEach(sku => {
+    // 1. 过滤出有库存有效的 sku
+    if (sku.inventory) {
+      // 2. 得到 sku 属性值数组
+      const specs = sku.specs.map(spec => spec.valueName)
+      // 3. 得到 sku 属性值数组的子集
+      const powerSet = getPowerSet(specs)
+      // 4. 设置给路径字典对象
+      powerSet.forEach(set => {
+        const key = set.join(spliter)
+        if (pathMap[key]) {
+          // 已经有 key 往数组追加
+          pathMap[key].push(sku.id)
+        } else {
+          // 没有 key 设置一个数组
+          pathMap[key] = [sku.id]
+        }
+      })
+    }
+  })
+  return pathMap
+}
 export default {
   name: 'GoodsSku',
   props: {
@@ -32,6 +59,8 @@ export default {
         val.selected = true
       }
     }
+    const pathMap = getPathMap(props.goods.skus)
+    console.log(pathMap)
     return { changeSku }
   }
 }
