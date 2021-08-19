@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { ref, watch, nextTick } from 'vue'
+import { ref, watch, nextTick, provide } from 'vue'
 import { useRoute } from 'vue-router'
 import { findGoods } from '@/api/product'
 import GoodsRelevant from './components/goods-relevant'
@@ -87,6 +87,7 @@ export default {
         goods.value.inventory = sku.inventory
       }
     }
+    provide('goods', goods)
     return { goods, changeSku, num }
   }
 }
