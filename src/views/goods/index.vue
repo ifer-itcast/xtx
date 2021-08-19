@@ -17,6 +17,7 @@
         <div class="spec">
           <GoodsName :goods="goods" />
           <GoodsSku :goods="goods" @change="changeSku" />
+          <XtxNumbox label="数量" v-model="num" :max="goods.inventory"/>
         </div>
       </div>
       <!-- 商品推荐 -->
@@ -73,15 +74,15 @@ export default {
   setup() {
     // 获取商品详情，进行渲染
     const goods = useGoods()
+    const num = ref(1)
     const changeSku = sku => {
-      console.log(sku)
       if (sku.skuId) {
         goods.value.price = sku.price
         goods.value.oldPrice = sku.oldPrice
         goods.value.inventory = sku.inventory
       }
     }
-    return { goods, changeSku }
+    return { goods, changeSku, num }
   }
 }
 </script>
