@@ -29,7 +29,7 @@
           <!-- 商品+评价 -->
           <GoodsTabs :goods="goods" />
           <!-- 注意事项 -->
-          <div class="goods-warn"></div>
+          <GoodsWarn />
         </div>
         <!-- 24热榜+专题推荐 -->
         <div class="goods-aside">
@@ -52,6 +52,7 @@ import GoodsName from './components/goods-name'
 import GoodsSku from './components/goods-sku'
 import GoodsTabs from './components/goods-tabs'
 import GoodsHot from './components/goods-hot'
+import GoodsWarn from './components/goods-warn'
 const useGoods = () => {
   const goods = ref(null)
   const route = useRoute()
@@ -75,7 +76,7 @@ const useGoods = () => {
 }
 export default {
   name: 'XtxGoodsPage',
-  components: { GoodsRelevant, GoodsImage, GoodsSales, GoodsName, GoodsSku, GoodsTabs, GoodsHot },
+  components: { GoodsRelevant, GoodsImage, GoodsSales, GoodsName, GoodsSku, GoodsTabs, GoodsHot, GoodsWarn },
   setup() {
     // 获取商品详情，进行渲染
     const goods = useGoods()
