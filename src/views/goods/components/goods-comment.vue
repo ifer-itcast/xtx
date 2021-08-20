@@ -19,11 +19,11 @@
       </div>
     </div>
     <!-- 排序 -->
-    <div class="sort" v-if="commentInfo">
+    <div class="sort">
       <span>排序：</span>
-      <a href="javascript:;" class="active">默认</a>
-      <a href="javascript:;">最新</a>
-      <a href="javascript:;">最热</a>
+      <a @click="changeSort(null)" :class="{ active: reqParams.sortField === null }" href="javascript:;">默认</a>
+      <a @click="changeSort('praiseCount')" :class="{ active: reqParams.sortField === 'praiseCount' }" href="javascript:;">最热</a>
+      <a @click="changeSort('createTime')" :class="{ active: reqParams.sortField === 'createTime' }" href="javascript:;">最新</a>
     </div>
     <!-- 列表 -->
     <div class="list">
@@ -55,12 +55,12 @@
   </div>
 </template>
 <script>
-import { ref, inject } from 'vue'
-import { findCommentInfoByGoods } from '@/api/goods'
+import { ref, inject, reactive, watch } from 'vue'
+import { findCommentInfoByGoods, findGoodsCommentList } from '@/api/product'
 const getCommentInfo = () => {
   const commentInfo = ref(null)
   const goods = inject('goods')
-  findCommentInfoByGoods(goods.id).then(data => {
+  findCommentInfoByGoods(goods.value.id).then(data => {
     // type 的目的是将来点击可以区分点的是不是标签
     data.result.tags.unshift({ type: 'img', title: '有图', tagCount: data.result.hasPictureCount })
     data.result.tags.unshift({ type: 'all', title: '全部评价', tagCount: data.result.evaluateCount })
@@ -72,11 +72,49 @@ export default {
   name: 'GoodsComment',
   setup() {
     const commentInfo = getCommentInfo()
+    const goods = inject('goods')
+    // x
     const currTagIndex = ref(0)
     const changeTag = i => {
       currTagIndex.value = i
+      // 设置有图和标签条件
+      const currTag = commentInfo.value.tags[i]
+      if (currTag.type === 'all') {
+        reqParams.hasPicture = false
+        reqParams.tag = null
+      } else if (currTag.type === 'img') {
+        reqParams.hasPicture = true
+        reqParams.tag = null
+      } else {
+        reqParams.hasPicture = false
+        reqParams.tag = currTag.title
+      }
+      reqParams.page = 1
     }
-    return { commentInfo, currTagIndex, changeTag }
+    // x
+    const reqParams = reactive({
+      page: 1,
+      pageSize: 10,
+      hasPicture: null,
+      tag: null,
+      sortField: null
+    })
+    const changeSort = type => {
+      reqParams.sortField = type
+      reqParams.page = 1
+    }
+
+    const commentList = ref([])
+    watch(
+      reqParams,
+      async () => {
+        reqParams.page = 1
+        const data = await findGoodsCommentList(goods.value.id, reqParams)
+        commentList.value = data.result.items
+      },
+      { immediate: true }
+    )
+    return { commentInfo, currTagIndex, changeTag, changeSort, reqParams }
   }
 }
 </script>
