@@ -35,5 +35,5 @@ export const findCommentInfoByGoods = id => {
  * @returns Promise
  */
 export const findGoodsCommentList = (id, params) => {
-  return request(`https://mock.boxuegu.com/mock/1175/goods/${id}/evaluate`, 'get', params)
+  return request(`https://mock.boxuegu.com/mock/1175/goods/${id}/evaluate/page`, 'get', params)
 }

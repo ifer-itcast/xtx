@@ -26,28 +26,22 @@
       <a @click="changeSort('createTime')" :class="{ active: reqParams.sortField === 'createTime' }" href="javascript:;">最新</a>
     </div>
     <!-- 列表 -->
-    <div class="list">
-      <div class="item">
+    <div class="list" v-if="commentList">
+      <div class="item" v-for="item in commentList" :key="item.id">
         <div class="user">
-          <img src="http://zhoushugang.gitee.io/erabbit-client-pc-static/uploads/avatar_1.png" alt="" />
-          <span>兔****m</span>
+          <img :src="item.member.avatar" alt="" />
+          <span>{{ formatNickname(item.member.nickname) }}</span>
         </div>
         <div class="body">
           <div class="score">
-            <i class="iconfont icon-wjx01"></i>
-            <i class="iconfont icon-wjx01"></i>
-            <i class="iconfont icon-wjx01"></i>
-            <i class="iconfont icon-wjx01"></i>
-            <i class="iconfont icon-wjx02"></i>
-            <span class="attr">颜色：黑色 尺码：M</span>
+            <i v-for="i in item.score" :key="i + 's'" class="iconfont icon-wjx01"></i>
+            <i v-for="i in 5 - item.score" :key="i + 'k'" class="iconfont icon-wjx02"></i>
+            <span class="attr">{{ formatSpecs(item.orderInfo.specs) }}</span>
           </div>
-          <div class="text">
-            网易云app上这款耳机非常不错 新人下载网易云购买这款耳机优惠大 而且耳机🎧确实正品 音质特别好 戴上这款耳机 听音乐看电影效果声音真是太棒了 无线方便 小盒自动充电 最主要是质量好音质棒
-            想要买耳机的放心拍 音效巴巴滴 老棒了
-          </div>
+          <div class="text">{{ item.content }}</div>
           <div class="time">
-            <span>2020-10-10 10:11:22</span>
-            <span class="zan"><i class="iconfont icon-dianzan"></i>100</span>
+            <span>{{ item.createTime }}</span>
+            <span class="zan"><i class="iconfont icon-dianzan"></i> {{ item.praiseCount }}</span>
           </div>
         </div>
       </div>
@@ -108,13 +102,18 @@ export default {
     watch(
       reqParams,
       async () => {
-        reqParams.page = 1
         const data = await findGoodsCommentList(goods.value.id, reqParams)
         commentList.value = data.result.items
       },
       { immediate: true }
     )
-    return { commentInfo, currTagIndex, changeTag, changeSort, reqParams }
+    const formatSpecs = specs => {
+      return specs.reduce((p, c) => `${p} ${c.name}：${c.nameValue}`, '').trim()
+    }
+    const formatNickname = nickname => {
+      return nickname.substr(0, 1) + '****' + nickname.substr(-1)
+    }
+    return { commentInfo, currTagIndex, changeTag, changeSort, reqParams, commentList, formatSpecs, formatNickname }
   }
 }
 </script>
