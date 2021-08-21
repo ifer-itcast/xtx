@@ -47,6 +47,8 @@
         </div>
       </div>
     </div>
+    <!-- 分页组件 -->
+    <xtx-pagination/>
   </div>
 </template>
 <script>
