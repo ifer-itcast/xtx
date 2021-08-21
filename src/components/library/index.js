@@ -4,6 +4,7 @@ import XtxCarousel from './xtx-carousel.vue'
 import XtxMore from './xtx-more.vue'
 import XtxBread from './xtx-bread.vue'
 import XtxBreadItem from './xtx-bread-item.vue' */
+import Message from './Message'
 
 // 目录、是否加载子目录、匹配规则
 const importFn = require.context('./', false, /\.vue$/)
@@ -52,5 +53,6 @@ export default {
     })
     // 定义指令
     defineDirective(app)
+    app.config.globalProperties.$message = Message // 原型函数
   }
 }

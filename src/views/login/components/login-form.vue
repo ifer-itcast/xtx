@@ -61,14 +61,22 @@
   </div>
 </template>
 <script>
-import { reactive, ref, watch } from 'vue'
+import { getCurrentInstance, reactive, ref, watch } from 'vue'
 import { Form, Field } from 'vee-validate'
 import schema from '@/utils/vee-validate-schema'
+// import Message from '@/components/library/Message'
 export default {
   name: 'LoginForm',
   components: {
     Form,
     Field
+  },
+  created() {
+    /* this.$message({
+      type: 'error',
+      text: '2021/8/21'
+    }) */
+    // Message({ type: 'error', text: '登录失败' })
   },
   setup() {
     // !切换的时候报错：是 Vue 的 Bug，升级版本即可
@@ -106,6 +114,12 @@ export default {
       const valid = await formCom.value.validate()
       console.log(valid)
     }
+    // setup 中获取实例
+    const { proxy } = getCurrentInstance()
+    proxy.$message({
+      type: 'success',
+      text: '嘻嘻嘻'
+    })
     return { isMsgLogin, form, mySchema, login, formCom }
   }
 }
