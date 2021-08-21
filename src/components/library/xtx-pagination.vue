@@ -1,14 +1,12 @@
 <template>
   <div class="xtx-pagination">
-    <a href="javascript:;" class="disabled">上一页</a>
-    <span>...</span>
-    <a href="javascript:;" class="active">3</a>
-    <a href="javascript:;">4</a>
-    <a href="javascript:;">5</a>
-    <a href="javascript:;">6</a>
-    <a href="javascript:;">7</a>
-    <span>...</span>
-    <a href="javascript:;">下一页</a>
+    <a v-if="pagenum <= 1" href="javascript:;" class="disabled">上一页</a>
+    <a v-else @click="changePage(pagenum - 1)" href="javascript:;">上一页</a>
+    <span v-if="pager.start > 1">...</span>
+    <a @click="changePage(i)" href="javascript:;" :class="{ active: i === pagenum }" v-for="i in pager.btnArr" :key="i">{{ i }}</a>
+    <span v-if="pager.end < pager.pageCount">...</span>
+    <a v-if="pagenum >= pager.pageCount" href="javascript:;" class="disabled">下一页</a>
+    <a @click="changePage(pagenum + 1)" v-else href="javascript:;">下一页</a>
   </div>
 </template>
 <script>
@@ -51,7 +49,11 @@ export default {
       return { pageCount, start, end, btnArr }
     })
 
-    return { pager, pagenum }
+    const changePage = newPage => {
+      pagenum.value = newPage
+    }
+
+    return { pager, pagenum, changePage }
   }
 }
 </script>
