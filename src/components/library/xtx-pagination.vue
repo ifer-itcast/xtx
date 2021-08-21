@@ -10,10 +10,24 @@
   </div>
 </template>
 <script>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 export default {
   name: 'XtxPagination',
-  setup() {
+  props: {
+    pTotal: {
+      type: Number,
+      default: 100
+    },
+    pPagenum: {
+      type: Number,
+      default: 1
+    },
+    pPagesize: {
+      type: Number,
+      default: 10
+    }
+  },
+  setup(props, { emit }) {
     // 总条数
     const total = ref(100)
     // 每页条数
@@ -50,9 +64,21 @@ export default {
     })
 
     const changePage = newPage => {
-      pagenum.value = newPage
+      if (pagenum.value !== newPage) {
+        pagenum.value = newPage
+        // 通知父组件最新页码
+        emit('current-change', newPage)
+      }
     }
-
+    watch(
+      props,
+      () => {
+        total.value = props.pTotal
+        pagesize.value = props.pPagesize
+        pagenum.value = props.pPagenum
+      },
+      { immediate: true }
+    )
     return { pager, pagenum, changePage }
   }
 }

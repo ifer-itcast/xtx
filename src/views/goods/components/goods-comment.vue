@@ -48,7 +48,7 @@
       </div>
     </div>
     <!-- 分页组件 -->
-    <xtx-pagination/>
+    <xtx-pagination v-if="total" :p-total="total" :p-pagesize="reqParams.pageSize" :p-pagenum="reqParams.page" @current-change="changePagerFn" />
   </div>
 </template>
 <script>
@@ -106,11 +106,13 @@ export default {
     }
 
     const commentList = ref([])
+    const total = ref(0)
     watch(
       reqParams,
       async () => {
         const data = await findGoodsCommentList(goods.value.id, reqParams)
         commentList.value = data.result.items
+        total.value = data.result.counts
       },
       { immediate: true }
     )
@@ -120,7 +122,11 @@ export default {
     const formatNickname = nickname => {
       return nickname.substr(0, 1) + '****' + nickname.substr(-1)
     }
-    return { commentInfo, currTagIndex, changeTag, changeSort, reqParams, commentList, formatSpecs, formatNickname }
+
+    const changePagerFn = newPage => {
+      reqParams.page = newPage
+    }
+    return { commentInfo, currTagIndex, changeTag, changeSort, reqParams, commentList, formatSpecs, formatNickname, total, changePagerFn }
   }
 }
 </script>
