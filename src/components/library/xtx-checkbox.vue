@@ -21,7 +21,8 @@ export default {
       const newVal = !checked.value
       // 通知父更新 2 个事件：@update:modelValue 和 @change
       checked.value = newVal
-      emit('change', changeChecked)
+      // !Bug Fixed
+      emit('change', newVal)
     }
     return { checked, changeChecked }
   }
